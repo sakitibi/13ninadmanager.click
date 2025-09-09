@@ -1,0 +1,89 @@
+{
+  "name": "AsakuraWiki",
+  "version": "2.0.25",
+  "main": "main/.Scripts/index.js",
+  "description": "",
+  "author": {
+    "name": "13ninstudio, Inc",
+    "url": "https://github.com/sakitibi/AsakuraWiki"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently \"next dev\" \"electron .\"",
+    "build": "next build && tsc -p tsconfig.json",
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.13ninstudio.asakurawiki",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": "universal"
+        }
+      ],
+      "protocols": [
+        {
+          "name": "asakurawiki Protocol",
+          "schemes": [
+            "AsakuraWiki"
+          ]
+        }
+      ],
+      "icon": "build/icon.icns"
+    },
+    "dmg": {
+      "title": "AsakuraWiki",
+      "icon": "build/icon.icns",
+      "iconSize": 128,
+      "contents": [
+        {
+          "x": 130,
+          "y": 220,
+          "type": "file"
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "asarUnpack": [
+      "node_modules/express/**",
+      "node_modules/qs/**",
+      "node_modules/side-channel/**"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "standalone",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": ".next/static",
+        "to": "standalone/.next/static",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "public",
+        "to": "standalone/public",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.57.3",
+    "nuxt": "^4.1.1"
+  }
+}
