@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody, createError, getRequestURL } from "h3";
 import { nanoid } from "nanoid";
-import { supabase } from "../utils/supabase";
+import { supabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const body = await readBody<{ url: string }>(event);

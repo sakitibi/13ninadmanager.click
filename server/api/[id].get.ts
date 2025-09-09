@@ -1,5 +1,5 @@
 import { defineEventHandler, createError, sendRedirect } from 'h3';
-import { supabase } from '../utils/supabase';
+import { supabase } from '@/utils/supabase';
 
 export default defineEventHandler(async (event) => {
     const id = event.context.params?.id;
