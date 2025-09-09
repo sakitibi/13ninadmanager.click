@@ -1,12 +1,18 @@
-export default defineEventHandler((event) => {
-    const id = event.context.params?.id;
-    // デモ用: 同じstoreを参照
-    const store: Record<string, string> = (global as any).store || {};
-    const url = store[id!];
+import { defineEventHandler, createError, sendRedirect } from 'h3';
+import { supabase } from '../utils/supabase';
 
-    if (!url) {
+export default defineEventHandler(async (event) => {
+    const id = event.context.params?.id;
+
+    const { data, error } = await supabase
+        .from("short_urls")
+        .select("original_url")
+        .eq("id", id)
+        .single();
+
+    if (error || !data) {
         throw createError({ statusCode: 404, statusMessage: "Not Found" });
     }
 
-    return sendRedirect(event, url, 302);
+    return sendRedirect(event, data.original_url, 302);
 });

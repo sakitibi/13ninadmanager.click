@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { $fetch } from 'ofetch'  // ✅ これで型エラー解決
 
 const input = ref("");
 const shortUrl = ref("");
