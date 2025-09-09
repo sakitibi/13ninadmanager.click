@@ -1,8 +1,11 @@
-import { defineEventHandler, createError, sendRedirect } from 'h3';
-import { supabase } from '@/utils/supabase';
+import { defineEventHandler, sendRedirect, createError } from "h3";
+import { supabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const id = event.context.params?.id;
+    if (!id) {
+        throw createError({ statusCode: 400, statusMessage: "ID is required" });
+    }
 
     const { data, error } = await supabase
         .from("short_urls")
