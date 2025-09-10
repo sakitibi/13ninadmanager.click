@@ -40,6 +40,7 @@ async function shorten() {
 
         <div v-if="shortUrl" class="mt-4">
             <p>短縮URL: <a :href="shortUrl" class="text-blue-600 underline">{{ shortUrl }}</a></p>
+            <p>説明: {{ outputDesc }}</p>
         </div>
     </div>
 </template>
