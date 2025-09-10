@@ -7,8 +7,8 @@ export default defineEventHandler(async (event) => {
     if (!body?.url) {
         throw createError({ statusCode: 400, statusMessage: "URL is required" });
     }
-
-    const id = nanoid(50);
+    const idlength:number = Math.floor(Math.random() * 100) + 100
+    const id = nanoid(idlength);
 
     const { error } = await supabase
         .from("short_urls")
