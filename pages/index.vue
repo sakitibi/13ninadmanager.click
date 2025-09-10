@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { $fetch } from 'ofetch'  // ✅ これで型エラー解決
+import { $fetch } from 'ofetch'
 
-const input = ref("");
+const inputURL = ref("");
+const inputDesc = ref("");
 const shortUrl = ref("");
+const outputDesc = ref("");
 
 async function shorten() {
-    const res = await $fetch<{ shortUrl: string }>("/api/shorten", {
+    const res = await $fetch<{ shortUrl: string, outputDesc: string }>("/api/shorten", {
         method: "POST",
-        body: { url: input.value }
+        body: { url: inputURL.value, description: inputDesc.value }
     });
     shortUrl.value = res.shortUrl;
+    outputDesc.value = res.outputDesc;
 }
 </script>
 
@@ -19,9 +22,16 @@ async function shorten() {
         <h1 class="text-2xl font-bold mb-4">URL短縮サービス</h1>
         <div class="flex gap-2">
             <input
-                v-model="input"
+                v-model="inputURL"
                 placeholder="https://example.com"
                 class="border rounded p-2 flex-1"
+                required
+            />
+            <input
+                v-model="inputDesc"
+                placeholder="description"
+                class="border rounded p-2 flex-1"
+                required
             />
             <button @click="shorten" class="bg-blue-500 text-white px-4 py-2 rounded">
                 短縮

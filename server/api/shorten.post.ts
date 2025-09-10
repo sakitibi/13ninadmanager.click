@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import { supabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
-    const body = await readBody<{ url: string }>(event);
+    const body = await readBody<{ url: string, description: string}>(event);
     if (!body?.url) {
         throw createError({ statusCode: 400, statusMessage: "URL is required" });
     }
@@ -12,7 +12,11 @@ export default defineEventHandler(async (event) => {
 
     const { error } = await supabase
         .from("short_urls")
-        .insert({ id, original_url: body.url });
+        .insert({
+            id,
+            original_url: body.url,
+            description: body.description
+        });
 
     if (error) {
         console.error(error);
