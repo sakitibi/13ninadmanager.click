@@ -17,5 +17,5 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 404, statusMessage: "Not Found" });
     }
 
-    return sendRedirect(event, data.original_url, 302);
+    return sendRedirect(event, data.original_url, 301);
 });
