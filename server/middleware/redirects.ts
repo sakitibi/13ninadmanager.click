@@ -1,4 +1,3 @@
-// server/middleware/redirect.ts
 import { defineEventHandler, sendRedirect } from 'h3'
 import { supabase } from '@/utils/supabase'
 
@@ -15,6 +14,6 @@ export default defineEventHandler(async (event) => {
 
     if (data?.original_url) {
         // 短縮URLならリダイレクト
-        return sendRedirect(event, data.original_url, 302)
+        return sendRedirect(event, data.original_url, 301)
     }
 })
