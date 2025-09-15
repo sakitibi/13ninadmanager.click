@@ -10,7 +10,7 @@ const outputDesc = ref("");
 async function shorten() {
     const res = await $fetch<{ shortUrl: string, outputDesc: string }>("/api/shorten", {
         method: "POST",
-        body: { url: inputURL.value, description: inputDesc.value }
+        body: { url: inputURL.value, description: inputDesc.value ?? null }
     });
     shortUrl.value = res.shortUrl;
     outputDesc.value = res.outputDesc;
@@ -31,7 +31,6 @@ async function shorten() {
                     v-model="inputDesc"
                     placeholder="description"
                     class="border rounded p-2 flex-1"
-                    required
                 />
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
                     短縮
