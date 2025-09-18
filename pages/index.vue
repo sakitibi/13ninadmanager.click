@@ -11,7 +11,11 @@ const shortUrl = ref<string>("");
 const outputDesc = ref<string>("");
 
 // 403 管理用
-const forbidden = ref(false);
+const forbidden = ref<boolean>(false);
+const Islogin = ref<boolean>(false);
+const email = ref("");
+const password = ref("");
+const errorMsg = ref("");
 
 // Supabase クライアント作成
 const supabase = useSupabase();
@@ -24,9 +28,13 @@ onMounted(async () => {
 
         console.log("Supabase user:", user);
         console.log("Supabase user.id:", user?.id);
-
-        if (!user || !ALLOWED_USER_IDS.includes(user.id)) {
+        if (!user) {
+            Islogin.value = false;
+        } else if(!!user && !ALLOWED_USER_IDS.includes(user.id)){
+            Islogin.value = true;
             forbidden.value = true;
+        } else {
+            Islogin.value = true;
         }
     } catch (err) {
         console.error("Failed to get user:", err);
@@ -38,7 +46,6 @@ onMounted(async () => {
 async function shorten(e: SubmitEvent) {
     e.preventDefault();
     if (forbidden.value) return;
-
     try {
         const res = await $fetch<{ shortUrl: string; outputDesc: string }>("/api/shorten", {
             method: "POST",
@@ -50,39 +57,71 @@ async function shorten(e: SubmitEvent) {
         console.error("Failed to shorten URL:", err);
     }
 }
+
+async function login(e: SubmitEvent) {
+    e.preventDefault();
+    errorMsg.value = "";
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.value,
+        password: password.value,
+    });
+
+    if (error) {
+        errorMsg.value = error.message;
+        return;
+    }
+
+    // 成功したら access_token を取得して index.vue へリダイレクト
+    const token = data.session?.access_token;
+    if (token) {
+        window.location.href = `/index?token=${token}`;
+    }
+}
 </script>
 <template>
     <div class="p-8 max-w-xl mx-auto">
-        <!-- 403 表示 -->
-        <div v-if="forbidden" class="text-red-600 font-bold text-lg">
-        403 Forbidden
-        </div>
-        <!-- URL短縮フォーム -->
-        <div v-else>
-            <h1 class="text-2xl font-bold mb-4">URL短縮サービス</h1>
-            <form @submit="shorten" class="flex gap-2">
-                <input
-                    v-model="inputURL"
-                    placeholder="https://example.com"
-                    class="border rounded p-2 flex-1"
-                    required
-                />
-                <input
-                    v-model="inputDesc"
-                    placeholder="description"
-                    class="border rounded p-2 flex-1"
-                />
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
-                短縮
-                </button>
-            </form>
-            <div v-if="shortUrl" class="mt-4">
-                <p>
-                短縮URL:
-                <a :href="shortUrl" class="text-blue-600 underline">{{ shortUrl }}</a>
-                </p>
-                <p v-if="outputDesc">説明: {{ outputDesc }}</p>
+        <div v-if="Islogin">
+            <!-- 403 表示 -->
+            <div v-if="forbidden" class="text-red-600 font-bold text-lg">
+            403 Forbidden
             </div>
+            <!-- URL短縮フォーム -->
+            <div v-else>
+                <h1 class="text-2xl font-bold mb-4">URL短縮サービス</h1>
+                <form @submit="shorten" class="flex gap-2">
+                    <input
+                        v-model="inputURL"
+                        placeholder="https://example.com"
+                        class="border rounded p-2 flex-1"
+                        required
+                    />
+                    <input
+                        v-model="inputDesc"
+                        placeholder="description"
+                        class="border rounded p-2 flex-1"
+                    />
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    短縮
+                    </button>
+                </form>
+                <div v-if="shortUrl" class="mt-4">
+                    <p>
+                    短縮URL:
+                    <a :href="shortUrl" class="text-blue-600 underline">{{ shortUrl }}</a>
+                    </p>
+                    <p v-if="outputDesc">説明: {{ outputDesc }}</p>
+                </div>
+            </div>
+        </div>
+        <div v-else>
+            <h1 class="text-2xl font-bold mb-4">ログイン</h1>
+            <form @submit="login" class="flex flex-col gap-2">
+                <input v-model="email" type="email" placeholder="Email" class="border p-2 rounded" required />
+                <input v-model="password" type="password" placeholder="Password" class="border p-2 rounded" required />
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">ログイン</button>
+            </form>
+            <p v-if="errorMsg" class="text-red-600 mt-2">{{ errorMsg }}</p>
         </div>
     </div>
 </template>
