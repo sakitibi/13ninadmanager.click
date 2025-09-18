@@ -7,7 +7,8 @@ const inputDesc = ref("");
 const shortUrl = ref("");
 const outputDesc = ref("");
 
-async function shorten() {
+async function shorten(e:SubmitEvent) {
+    e.preventDefault();
     const res = await $fetch<{ shortUrl: string, outputDesc: string }>("/api/shorten", {
         method: "POST",
         body: { url: inputURL.value, description: inputDesc.value ?? null }
