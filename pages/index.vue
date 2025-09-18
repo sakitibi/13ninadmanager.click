@@ -10,8 +10,9 @@ const shortUrl = ref<string>("");
 const outputDesc = ref<string>("");
 
 // 403 管理用
-const forbidden = ref<boolean>(false);
-const Islogin = ref<boolean>(false);
+const forbidden = ref<boolean>(true);
+const url:URL = new URL(window.location.pathname);
+const Islogin:boolean = url.searchParams.get("login") === "true" || false;
 const email = ref("");
 const password = ref("");
 const errorMsg = ref("");
@@ -33,16 +34,18 @@ onMounted(async () => {
     const user = data.user;
 
     console.log("Supabase user:", user);
-    if(!user){
-        Islogin.value = false;
-    } else if (!ALLOWED_USER_IDS.includes(user.id)) {
-        Islogin.value = true;
-        forbidden.value = true;
-    } else {
-        Islogin.value = true;
-        forbidden.value = false;
+    if(Islogin){
+        Islogined(user);
     }
 });
+
+function Islogined(user:any){
+    if (!user || !ALLOWED_USER_IDS.includes(user.id)) {
+        forbidden.value = true;
+    } else {
+        forbidden.value = false;
+    }
+}
 
 async function shorten(e: SubmitEvent) {
     e.preventDefault();
@@ -77,10 +80,6 @@ async function login(e: SubmitEvent) {
     if (token) {
         window.location.href = `/?token=${token}`;
     }
-}
-
-function loginButton(boolean:boolean){
-    Islogin.value = boolean;
 }
 
 // ログアウト
@@ -127,7 +126,6 @@ function signup() {
                     </p>
                     <p v-if="outputDesc">説明: {{ outputDesc }}</p>
                 </div>
-                <button @click="() => loginButton(false)">まだログインしていませんか?</button>
                 <button @click="signup">まだ登録していませんか?</button>
             </div>
         </div>
@@ -139,7 +137,6 @@ function signup() {
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">ログイン</button>
             </form>
             <p v-if="errorMsg" class="text-red-600 mt-2">{{ errorMsg }}</p>
-            <button @click="() => loginButton(true)">すでにログイン済みですか?</button>
             <button @click="logout">ログアウト</button>
         </div>
     </div>
