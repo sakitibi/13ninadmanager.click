@@ -8,13 +8,17 @@ const inputURL = ref<string>("");
 const inputDesc = ref<string>("");
 const shortUrl = ref<string>("");
 const outputDesc = ref<string>("");
-
 const forbidden = ref(false);
 
 onMounted(async () => {
     const supabase = useSupabase();
     const { data } = await supabase.auth.getUser();
     const user = data.user;
+
+    // ログ出力
+    console.log("Supabase user object:", user);
+    console.log("Supabase user.id:", user?.id);
+
     if (!user || !ALLOWED_USER_IDS.includes(user.id)) {
         forbidden.value = true;
     }
