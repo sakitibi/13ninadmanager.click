@@ -1,17 +1,29 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { $fetch } from 'ofetch'
+import { $fetch } from "ofetch";
+import { supabase } from "@/utils/supabase";
+import { createError } from "#app";
+import { ALLOWED_USER_IDS } from "@/config/allowedUser"; // ←別ファイルから固定IDを読み込み
 
-const inputURL = ref("");
-const inputDesc = ref("");
-const shortUrl = ref("");
-const outputDesc = ref("");
+// ページロード時に認証チェック
+const { data } = await supabase.auth.getUser();
+const user = data.user;
+const ISALLOWED_USER = ALLOWED_USER_IDS.find(value => value === user?.id);
 
-async function shorten(e:SubmitEvent) {
+if (!user || !ISALLOWED_USER) {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+}
+
+const inputURL = ref<string>("");
+const inputDesc = ref<string>("");
+const shortUrl = ref<string>("");
+const outputDesc = ref<string>("");
+
+async function shorten(e: SubmitEvent) {
     e.preventDefault();
-    const res = await $fetch<{ shortUrl: string, outputDesc: string }>("/api/shorten", {
+    const res = await $fetch<{ shortUrl: string; outputDesc: string }>("/api/shorten", {
         method: "POST",
-        body: { url: inputURL.value, description: inputDesc.value ?? null }
+        body: { url: inputURL.value, description: inputDesc.value ?? null },
     });
     shortUrl.value = res.shortUrl;
     outputDesc.value = res.outputDesc;
@@ -34,12 +46,15 @@ async function shorten(e:SubmitEvent) {
                     class="border rounded p-2 flex-1"
                 />
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
-                    短縮
+                短縮
                 </button>
             </form>
         </div>
         <div v-if="shortUrl" class="mt-4">
-            <p>短縮URL: <a :href="shortUrl" class="text-blue-600 underline">{{ shortUrl }}</a></p>
+            <p>
+                短縮URL:
+                <a :href="shortUrl" class="text-blue-600 underline">{{ shortUrl }}</a>
+            </p>
             <p>説明: {{ outputDesc }}</p>
         </div>
     </div>
