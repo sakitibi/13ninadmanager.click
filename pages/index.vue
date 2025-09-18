@@ -81,7 +81,7 @@ async function shorten(e: SubmitEvent) {
                 短縮URL:
                 <a :href="shortUrl" class="text-blue-600 underline">{{ shortUrl }}</a>
                 </p>
-                <p>説明: {{ outputDesc }}</p>
+                <p v-if="outputDesc">説明: {{ outputDesc }}</p>
             </div>
         </div>
     </div>
