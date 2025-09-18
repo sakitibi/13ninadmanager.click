@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { $fetch } from "ofetch";
-import { supabase } from "@/utils/supabase";
+import { useSupabase } from "@/utils/supabase";
 import { createError } from "#app";
 import { ALLOWED_USER_IDS } from "@/config/allowedUser"; // ←別ファイルから固定IDを読み込み
 
 // ページロード時に認証チェック
+const supabase = useSupabase();
 const { data } = await supabase.auth.getUser();
 const user = data.user;
 const ISALLOWED_USER = ALLOWED_USER_IDS.find(value => value === user?.id);

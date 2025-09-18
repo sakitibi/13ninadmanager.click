@@ -1,8 +1,9 @@
 import { defineEventHandler, sendRedirect } from 'h3'
-import { supabase } from '@/utils/supabase'
+import { useSupabase } from '@/utils/supabase'
 
 export default defineEventHandler(async (event) => {
     const path = event.node.req.url?.slice(1) // "/" を除去
+    const supabase = useSupabase();
     if (!path) return // ルートなら何もしない
 
     // APIで作った短縮IDか確認
