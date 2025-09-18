@@ -77,6 +77,17 @@ async function login(e: SubmitEvent) {
 function loginButton(boolean:boolean){
     Islogin.value = boolean;
 }
+
+// ログアウト
+async function logout() {
+    await supabase.auth.signOut();
+    window.location.reload();
+}
+
+// サインアップ（メール + パスワード）
+function signup() {
+    window.location.replace("https://asakura-wiki.vercel.app/login/signup");
+}
 </script>
 <template>
     <div class="p-8 max-w-xl mx-auto">
@@ -112,6 +123,7 @@ function loginButton(boolean:boolean){
                     <p v-if="outputDesc">説明: {{ outputDesc }}</p>
                 </div>
                 <button @click="() => loginButton(false)">まだログインしていませんか?</button>
+                <button @click="signup">まだ登録していませんか?</button>
             </div>
         </div>
         <div v-else>
@@ -123,6 +135,7 @@ function loginButton(boolean:boolean){
             </form>
             <p v-if="errorMsg" class="text-red-600 mt-2">{{ errorMsg }}</p>
             <button @click="() => loginButton(true)">すでにログイン済みですか?</button>
+            <button @click="logout">ログアウト</button>
         </div>
     </div>
 </template>
