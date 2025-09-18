@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { $fetch } from "ofetch";
 import { useSupabase } from "@/utils/supabase";
 import { ALLOWED_USER_IDS } from "@/config/allowedUser";
 
@@ -74,6 +73,10 @@ async function login(e: SubmitEvent) {
         window.location.href = `/?token=${token}`;
     }
 }
+
+function loginButton(boolean:boolean){
+    Islogin.value = boolean;
+}
 </script>
 <template>
     <div class="p-8 max-w-xl mx-auto">
@@ -108,6 +111,7 @@ async function login(e: SubmitEvent) {
                     </p>
                     <p v-if="outputDesc">説明: {{ outputDesc }}</p>
                 </div>
+                <button @click="() => loginButton(false)">まだログインしていませんか?</button>
             </div>
         </div>
         <div v-else>
@@ -118,6 +122,7 @@ async function login(e: SubmitEvent) {
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">ログイン</button>
             </form>
             <p v-if="errorMsg" class="text-red-600 mt-2">{{ errorMsg }}</p>
+            <button @click="() => loginButton(true)">すでにログイン済みですか?</button>
         </div>
     </div>
 </template>
