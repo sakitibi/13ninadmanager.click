@@ -71,7 +71,7 @@ async function login(e: SubmitEvent) {
     // 成功したら access_token を取得して index.vue へリダイレクト
     const token = data.session?.access_token;
     if (token) {
-        window.location.href = `/index?token=${token}`;
+        window.location.href = `/?token=${token}`;
     }
 }
 </script>
