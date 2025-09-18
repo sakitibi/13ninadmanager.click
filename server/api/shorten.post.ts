@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody, createError, getRequestURL } from "h3";
 import { nanoid } from "nanoid";
-import { supabase } from "@/utils/supabase";
+import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const body = await readBody<{ url: string, description: string | null}>(event);
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     }
     const idlength:number = Math.floor(Math.random() * 100) + 100
     const id = nanoid(idlength);
-
+    const supabase = useSupabase();
     const { error } = await supabase
         .from("short_urls")
         .insert({
