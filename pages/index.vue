@@ -33,9 +33,14 @@ onMounted(async () => {
     const user = data.user;
 
     console.log("Supabase user:", user);
-
-    if (!user || !ALLOWED_USER_IDS.includes(user.id)) {
+    if(!user){
+        Islogin.value = false;
+    } else if (!ALLOWED_USER_IDS.includes(user.id)) {
+        Islogin.value = true;
         forbidden.value = true;
+    } else {
+        Islogin.value = true;
+        forbidden.value = false;
     }
 });
 
