@@ -12,7 +12,6 @@ const user = data.user;
 const ISALLOWED_USER = ALLOWED_USER_IDS.find(value => value === user?.id);
 
 if (!user || !ISALLOWED_USER) {
-    console.log("userid: ", user?.id);
     throw createError({ statusCode: 403, statusMessage: "Forbidden" });
 }
 
