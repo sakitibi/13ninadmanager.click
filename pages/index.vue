@@ -21,41 +21,37 @@ const errorMsg = ref("");
 const supabase = useSupabase();
 
 // ページマウント時にクライアントサイドで認証チェック
-onMounted(async () => {
-    try {
-        const { data } = await supabase.auth.getUser();
-        const user = data.user;
 
-        console.log("Supabase user:", user);
-        console.log("Supabase user.id:", user?.id);
-        if (!user) {
-            Islogin.value = false;
-        } else if(!!user && !ALLOWED_USER_IDS.includes(user.id)){
-            Islogin.value = true;
-            forbidden.value = true;
-        } else {
-            Islogin.value = true;
-        }
-    } catch (err) {
-        console.error("Failed to get user:", err);
+onMounted(async () => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+        await supabase.auth.setSession({ access_token: token, refresh_token: "" });
+    }
+
+    const { data } = await supabase.auth.getUser();
+    const user = data.user;
+
+    console.log("Supabase user:", user);
+
+    if (!user || !ALLOWED_USER_IDS.includes(user.id)) {
         forbidden.value = true;
     }
 });
 
-// 短縮URL作成関数
 async function shorten(e: SubmitEvent) {
     e.preventDefault();
     if (forbidden.value) return;
-    try {
-        const res = await $fetch<{ shortUrl: string; outputDesc: string }>("/api/shorten", {
-            method: "POST",
-            body: { url: inputURL.value, description: inputDesc.value ?? null },
-        });
-        shortUrl.value = res.shortUrl;
-        outputDesc.value = res.outputDesc;
-    } catch (err) {
-        console.error("Failed to shorten URL:", err);
-    }
+
+    const res = await fetch("/api/shorten", {
+        method: "POST",
+        body: JSON.stringify({ url: inputURL.value, description: inputDesc.value }),
+        headers: { "Content-Type": "application/json" },
+    });
+    const result = await res.json();
+    shortUrl.value = result.shortUrl;
+    outputDesc.value = result.outputDesc;
 }
 
 async function login(e: SubmitEvent) {
