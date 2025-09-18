@@ -1,12 +1,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { $fetch } from "ofetch";
+import { useSupabase } from "@/utils/supabase";
+import { ALLOWED_USER_IDS } from "@/config/allowedUser";
+import { createError } from "h3";
 
+// Supabase クライアント作成
+const supabase = useSupabase();
+
+// ページロード時に管理者チェック
+const { data } = await supabase.auth.getUser();
+const user = data.user;
+
+if (!user || !ALLOWED_USER_IDS.includes(user.id)) {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+}
+
+// フォーム用 state
 const inputURL = ref<string>("");
 const inputDesc = ref<string>("");
 const shortUrl = ref<string>("");
 const outputDesc = ref<string>("");
 
+// 短縮URL作成関数
 async function shorten(e: SubmitEvent) {
     e.preventDefault();
     const res = await $fetch<{ shortUrl: string; outputDesc: string }>("/api/shorten", {
@@ -45,8 +61,3 @@ async function shorten(e: SubmitEvent) {
         </div>
     </div>
 </template>
-<script setup lang="ts">
-definePageMeta({
-    middleware: ["auth"], // 作成した middleware を呼ぶ
-});
-</script>
