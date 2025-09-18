@@ -10,7 +10,7 @@ const shortUrl = ref<string>("");
 const outputDesc = ref<string>("");
 
 // 403 管理用
-const forbidden = ref<boolean>(false);
+const forbidden = ref<boolean>(true);
 const Islogin = ref<boolean>(false);
 const email = ref("");
 const password = ref("");
@@ -31,17 +31,23 @@ onMounted(async () => {
         await supabase.auth.setSession({ access_token: token, refresh_token: "" });
     }
 
-    // login=true が URL にあれば強制的にログイン済みフラグ
-    if (loginFlag === "true") {
-        Islogin.value = true;
-    }
-
     // supabase からユーザー情報取得
     const { data } = await supabase.auth.getUser();
     const user = data.user;
 
     console.log("Supabase user:", user);
 
+    // login=true が URL にあれば強制的にログイン済みフラグ
+    if (loginFlag === "true" && !!user) {
+        Islogin.value = true;
+        if(ALLOWED_USER_IDS.includes(user.id)){
+            forbidden.value = false;
+        } else {
+            forbidden.value = true;
+        }
+    } else {
+        Islogin.value = false;
+    }
     if(!user){
         if (!Islogin.value) Islogin.value = false;
     } else if (!ALLOWED_USER_IDS.includes(user.id)) {
