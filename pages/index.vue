@@ -139,6 +139,7 @@ function signup() {
                     </p>
                     <p v-if="outputDesc">説明: {{ outputDesc }}</p>
                 </div>
+                <button @click="logout">ログアウト</button>
                 <button @click="signup">まだ登録していませんか?</button>
             </div>
         </div>
@@ -150,7 +151,6 @@ function signup() {
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">ログイン</button>
             </form>
             <p v-if="errorMsg" class="text-red-600 mt-2">{{ errorMsg }}</p>
-            <button @click="logout">ログアウト</button>
         </div>
     </div>
 </template>
