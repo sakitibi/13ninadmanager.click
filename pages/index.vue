@@ -10,9 +10,8 @@ const shortUrl = ref<string>("");
 const outputDesc = ref<string>("");
 
 // 403 管理用
-const forbidden = ref<boolean>(true);
-const url:URL = new URL(window.location.pathname);
-const Islogin:boolean = url.searchParams.get("login") === "true" || false;
+const forbidden = ref<boolean>(false);
+const Islogin = ref<boolean>(false);
 const email = ref("");
 const password = ref("");
 const errorMsg = ref("");
@@ -25,27 +24,34 @@ const supabase = useSupabase();
 onMounted(async () => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
+    const loginFlag = params.get("login"); // ←追加
 
+    // token がある場合は supabase セッションをセット
     if (token) {
         await supabase.auth.setSession({ access_token: token, refresh_token: "" });
     }
 
+    // login=true が URL にあれば強制的にログイン済みフラグ
+    if (loginFlag === "true") {
+        Islogin.value = true;
+    }
+
+    // supabase からユーザー情報取得
     const { data } = await supabase.auth.getUser();
     const user = data.user;
 
     console.log("Supabase user:", user);
-    if(Islogin){
-        Islogined(user);
-    }
-});
 
-function Islogined(user:any){
-    if (!user || !ALLOWED_USER_IDS.includes(user.id)) {
+    if(!user){
+        if (!Islogin.value) Islogin.value = false;
+    } else if (!ALLOWED_USER_IDS.includes(user.id)) {
+        Islogin.value = true;
         forbidden.value = true;
     } else {
+        Islogin.value = true;
         forbidden.value = false;
     }
-}
+});
 
 async function shorten(e: SubmitEvent) {
     e.preventDefault();
