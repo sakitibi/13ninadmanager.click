@@ -11,10 +11,10 @@ export default defineEventHandler(async (event) => {
     const id = nanoid(idlength);
     const supabase = useSupabase();
     const { error } = await supabase
-        .from("short_urls")
+        .from("13ninad.click_urls")
         .insert({
             id,
-            original_url: body.url,
+            url: body.url,
             description: body.description
         });
 

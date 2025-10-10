@@ -8,8 +8,8 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: "ID is required" });
     }
     const { data, error } = await supabase
-        .from("short_urls")
-        .select("original_url")
+        .from("13ninad.click_urls")
+        .select("url")
         .eq("id", id)
         .single();
 
@@ -17,5 +17,5 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 404, statusMessage: "Not Found" });
     }
 
-    return sendRedirect(event, data.original_url, 301);
+    return sendRedirect(event, data.url, 301);
 });
