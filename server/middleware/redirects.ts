@@ -8,13 +8,13 @@ export default defineEventHandler(async (event) => {
 
     // APIで作った短縮IDか確認
     const { data } = await supabase
-        .from('short_urls')
-        .select('original_url')
+        .from('13ninad.click_urls')
+        .select('url')
         .eq('id', path)
         .single()
 
-    if (data?.original_url) {
+    if (data?.url) {
         // 短縮URLならリダイレクト
-        return sendRedirect(event, data.original_url, 301)
+        return sendRedirect(event, data.url, 301)
     }
 })
