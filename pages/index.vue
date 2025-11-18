@@ -102,7 +102,7 @@ async function logout() {
 
 // サインアップ（メール + パスワード）
 function signup() {
-    window.location.replace("https://asakura-wiki.vercel.app/login/signup");
+    window.location.replace("https://asakura-wiki.vercel.app/login/13nin/signup");
 }
 </script>
 <template>
