@@ -63,14 +63,25 @@ async function shorten(e: SubmitEvent) {
     e.preventDefault();
     if (forbidden.value) return;
 
-    const res = await fetch("/api/shorten", {
-        method: "POST",
-        body: JSON.stringify({ url: inputURL.value, description: inputDesc.value }),
-        headers: { "Content-Type": "application/json" },
-    });
-    const result = await res.json();
-    shortUrl.value = result.shortUrl;
-    outputDesc.value = result.outputDesc;
+    try {
+        const res = await fetch("/api/shorten", {
+            method: "POST",
+            body: JSON.stringify({ url: inputURL.value, description: inputDesc.value }),
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("API Error:", res.status, errorText);
+            return;
+        }
+
+        const result = await res.json();
+        shortUrl.value = result.shortUrl;
+        outputDesc.value = result.outputDesc;
+    } catch (err) {
+        console.error("Fetch failed:", err);
+    }
 }
 
 async function login(e: SubmitEvent) {
