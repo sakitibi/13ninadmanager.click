@@ -2,7 +2,7 @@ import { defineEventHandler, redirect } from 'h3'
 import { useSupabase } from '@/utils/supabase'
 
 export default defineEventHandler(async (event) => {
-    const path = event.req.url?.slice(1) // "/" を除去
+    const path = "/ck" + event.req.url?.slice(1) // "/" を除去
     const supabase = useSupabase();
     if (!path) return // ルートなら何もしない
 
