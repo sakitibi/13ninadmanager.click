@@ -1,8 +1,8 @@
-import { defineEventHandler, sendRedirect } from 'h3'
+import { defineEventHandler, redirect } from 'h3'
 import { useSupabase } from '@/utils/supabase'
 
 export default defineEventHandler(async (event) => {
-    const path = event.node.req.url?.slice(1) // "/" を除去
+    const path = event.req.url?.slice(1) // "/" を除去
     const supabase = useSupabase();
     if (!path) return // ルートなら何もしない
 
@@ -15,6 +15,6 @@ export default defineEventHandler(async (event) => {
 
     if (data?.url) {
         // 短縮URLならリダイレクト
-        return sendRedirect(event, data.url, 301)
+        return redirect(data.url, 301)
     }
 })

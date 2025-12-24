@@ -1,11 +1,11 @@
-import { defineEventHandler, readBody, createError, getRequestURL } from "h3";
+import { defineEventHandler, readBody, HTTPError, getRequestURL } from "h3";
 import { nanoid } from "nanoid";
 import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const body = await readBody<{ url: string, description: string | null}>(event);
     if (!body?.url) {
-        throw createError({ statusCode: 400, statusMessage: "URL is required" });
+        throw new HTTPError({ statusCode: 400, statusMessage: "URL is required" });
     }
     const idlength:number = Math.floor(Math.random() * 100) + 100
     const id = nanoid(idlength);
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
     if (error) {
         console.error(error);
-        throw createError({ statusCode: 500, statusMessage: "DB insert failed" });
+        throw new HTTPError({ statusCode: 500, statusMessage: "DB insert failed" });
     }
 
     return { shortUrl: `${getRequestURL(event).origin}/${id}`, outputDesc: body.description };
