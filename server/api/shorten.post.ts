@@ -4,7 +4,7 @@ import { useSupabaseServer } from "@/utils/supabase.server";
 
 export default defineEventHandler(async (event) => {
     try {
-        // readBody で安全に body を取得
+        // H3 標準の readBody で安全に body を取得
         const body = await readBody<Partial<{ url: string; description: string }>>(event);
 
         if (!body?.url) {
