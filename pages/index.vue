@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useSupabase } from "@/utils/supabase";
 import { ALLOWED_USER_IDS } from "@/config/allowedUser";
+import { nanoid } from "nanoid";
 
 // フォーム用 state
 const inputURL = ref<string>("");
@@ -59,29 +60,29 @@ onMounted(async () => {
     }
 });
 
-async function shorten(e: SubmitEvent) {
+async function shorten(e: Event) {
     e.preventDefault();
-    if (forbidden.value) return;
 
-    try {
-        const res = await fetch("/api/shorten", {
-            method: "POST",
-            body: JSON.stringify({ url: inputURL.value, description: inputDesc.value }),
-            headers: { "Content-Type": "application/json" },
+    if (!inputURL.value) return;
+
+    // ランダムID作成
+    const id = nanoid(Math.floor(Math.random() * 100) + 100); // nanoidでも可
+    // 直接 INSERT
+    const { error } = await supabase
+        .from("13ninad_click_urls") // RLS OFFの場合
+        .insert({
+            id,
+            url: inputURL.value,
+            description: inputDesc.value || null
         });
 
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error("API Error:", res.status, errorText);
-            return;
-        }
-
-        const result = await res.json();
-        shortUrl.value = result.shortUrl;
-        outputDesc.value = result.outputDesc;
-    } catch (err) {
-        console.error("Fetch failed:", err);
+    if (error) {
+        console.error("Supabase Insert Error:", error);
+        return;
     }
+
+    shortUrl.value = `${window.location.origin}/ck/${id}`;
+    outputDesc.value = inputDesc.value || "";
 }
 
 async function login(e: SubmitEvent) {
