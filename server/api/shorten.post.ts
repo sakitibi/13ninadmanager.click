@@ -6,8 +6,7 @@ export default defineEventHandler(async (event) => {
     try {
         const body = await readBody<Partial<{ url: string; description: string }>>(event);
 
-        // URLがなければ 400 を JSON で返す
-        if (!body?.url) {
+        if (!body || !body.url) {
             return { error: true, statusCode: 400, message: "URL is required" };
         }
 
@@ -15,8 +14,8 @@ export default defineEventHandler(async (event) => {
         const supabase = useSupabaseServer();
 
         const { error } = await supabase
-        .from('"public"."13ninad_click_urls"')
-        .insert({ id, url: body.url, description: body.description ?? null });
+            .from('"public"."13ninad_click_urls"')
+            .insert({ id, url: body.url, description: body.description ?? null });
 
         if (error) {
             return { error: true, statusCode: 500, message: error.message, details: error };
@@ -29,7 +28,6 @@ export default defineEventHandler(async (event) => {
             outputDesc: body.description ?? null,
         };
     } catch (err: any) {
-        // 例外が発生しても 500 を JSON で返す
         return { error: true, statusCode: 500, message: err.message ?? "Unknown server error" };
     }
 });
