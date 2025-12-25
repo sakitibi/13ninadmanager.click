@@ -23,5 +23,5 @@ export default defineEventHandler(async (event) => {
         throw new HTTPError({ statusCode: 500, statusMessage: "DB insert failed" });
     }
 
-    return { shortUrl: `${getRequestURL(event).origin}/${id}`, outputDesc: body.description };
+    return { shortUrl: `${getRequestURL(event).origin}/ck/${id}`, outputDesc: body.description };
 });

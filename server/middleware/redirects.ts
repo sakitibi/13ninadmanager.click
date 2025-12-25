@@ -4,7 +4,7 @@ import { useSupabase } from '@/utils/supabase'
 export default defineEventHandler(async (event) => {
     const path = event.req.url?.slice(1) // "/" を除去
     const supabase = useSupabase();
-    if (!path || !path.startsWith("/ck")) return // ルートなら何もしない
+    if (!path) return // ルートなら何もしない
 
     // APIで作った短縮IDか確認
     const { data } = await supabase
