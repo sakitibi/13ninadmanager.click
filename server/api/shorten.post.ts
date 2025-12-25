@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
         throw createError({
             statusCode: 500,
             statusMessage: "DB insert failed",
-            message: JSON.stringify(error) // ここに supabaseError を含める
+            message: error.message || "Unknown Supabase Error"
         });
     }
 
