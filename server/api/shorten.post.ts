@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody, createError, getRequestURL } from "h3";
 import { nanoid } from "nanoid";
-import { useSupabase } from "@/utils/supabase";
+import { useSupabaseServer } from "@/utils/supabase.server";
 
 export default defineEventHandler(async (event) => {
     const body = await readBody<{ url: string; description: string | null }>(event);
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     const idLength = Math.floor(Math.random() * 100) + 100;
     const id = nanoid(idLength);
 
-    const supabase = useSupabase();
+    const supabase = useSupabaseServer();
     const { error } = await supabase
         .from("13ninad_click_urls")
         .insert({
