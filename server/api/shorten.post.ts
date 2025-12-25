@@ -3,27 +3,33 @@ import { nanoid } from "nanoid";
 import { useSupabaseServer } from "@/utils/supabase.server";
 
 export default defineEventHandler(async (event) => {
-    const body = await readBody<Partial<{ url: string; description: string }>>(event);
+    try {
+        const body = await readBody<Partial<{ url: string; description: string }>>(event);
 
-    // URLがなければ 400 を JSON で返す
-    if (!body?.url) {
-        return { error: true, statusCode: 400, message: "URL is required" };
-    }
+        // URLがなければ 400 を JSON で返す
+        if (!body?.url) {
+            return { error: true, statusCode: 400, message: "URL is required" };
+        }
 
-    const id = nanoid(Math.floor(Math.random() * 100) + 100);
-    const supabase = useSupabaseServer();
+        const id = nanoid(Math.floor(Math.random() * 100) + 100);
+        const supabase = useSupabaseServer();
 
-    const { error } = await supabase
-        .from('"13ninad_click_urls"')
+        const { error } = await supabase
+        .from('"public"."13ninad_click_urls"')
         .insert({ id, url: body.url, description: body.description ?? null });
 
-    if (error) {
-        // Supabase エラーをそのまま返す
-        return { error: false, statusCode: 200, message: error.message, details: error };
-    }
+        if (error) {
+            return { error: true, statusCode: 500, message: error.message, details: error };
+        }
 
-    return {
-        shortUrl: `${getRequestURL(event).origin}/ck/${id}`,
-        outputDesc: body.description,
-    };
+        return {
+            error: false,
+            statusCode: 200,
+            shortUrl: `${getRequestURL(event).origin}/ck/${id}`,
+            outputDesc: body.description ?? null,
+        };
+    } catch (err: any) {
+        // 例外が発生しても 500 を JSON で返す
+        return { error: true, statusCode: 500, message: err.message ?? "Unknown server error" };
+    }
 });
