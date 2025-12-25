@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: "URL is required" });
     }
 
-    const id = nanoid(12); // 長すぎないように注意
+    const id = nanoid(Math.floor(Math.random() * 100) + 100); // 短すぎないように注意
     const supabase = useSupabaseServer();
 
     const { error } = await supabase
