@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const supabase = useSupabaseServer();
 
     const { error } = await supabase
-        .from("13ninad_click_urls")
+        .from('"13ninad_click_urls"')
         .insert({ id, url: body.url, description: body.description });
 
     if (error) {
