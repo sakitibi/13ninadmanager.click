@@ -10,8 +10,7 @@ export default defineEventHandler(async (event) => {
     const supabase = useSupabase();
 
     const { data, error } = await supabase
-        .schema("13ninad")
-        .from("click_urls")
+        .from("13ninad_click_urls")
         .select("url")
         .eq("id", id)
         .single();
