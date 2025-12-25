@@ -1,20 +1,37 @@
-import { defineEventHandler, sendRedirect } from 'h3'
-import { useSupabase } from '@/utils/supabase'
+import { defineEventHandler, sendRedirect } from "h3";
+import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
-    const path = event.req.url?.slice(1) // "/" を除去
-    const supabase = useSupabase();
-    if (!path) return // ルートなら何もしない
+    // pathname のみ取得（query 排除）
+    const url = new URL(event.req.url!, "http://localhost");
+    const pathname = url.pathname;
 
-    // APIで作った短縮IDか確認
-    const { data } = await supabase
-        .from('13ninad.click_urls')
-        .select('url')
-        .eq('id', path)
-        .single()
-
-    if (data?.url) {
-        // 短縮URLならリダイレクト
-        return sendRedirect(event, data.url, 301)
+    // "/" や "/ck/xxx" は middleware では触らない
+    if (pathname === "/" || pathname.startsWith("/ck/")) {
+        return;
     }
-})
+
+    // "/abc123" → "abc123"
+    const id = pathname.slice(1);
+    if (!id) return;
+
+    const supabase = useSupabase();
+
+    const { data, error } = await supabase
+        .from("13ninad.click_urls")
+        .select("url, legacy")
+        .eq("id", id)
+        .single();
+
+    if (error || !data) {
+        return; // 404 は Nuxt に任せる
+    }
+
+    // legacy=true のみ middleware で直接リダイレクト
+    if (data.legacy === true) {
+        return sendRedirect(event, data.url, 301);
+    }
+
+    // legacy=false は /ck 側へ
+    return sendRedirect(event, `/ck/${id}`, 302);
+});
