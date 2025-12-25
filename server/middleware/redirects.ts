@@ -29,6 +29,12 @@ export default defineEventHandler(async (event) => {
         return; // Nuxt に 404 を任せる
     }
 
-    // 常に /ck に寄せる
-    return sendRedirect(event, `/ck/${id}`, 301);
+    // 🔴 ここが重要
+    sendRedirect(event, `/ck/${id}`, 301);
+
+    // Nuxt 4 正式ルートで強制終了
+    const res = event.runtime?.node?.res;
+    if (res && !res.writableEnded) {
+        res.end();
+    }
 });
