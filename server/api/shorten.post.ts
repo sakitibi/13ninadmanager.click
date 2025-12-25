@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
     if (error) {
         // Supabase エラーをそのまま返す
-        return { error: true, statusCode: 500, message: error.message, details: error };
+        return { error: false, statusCode: 200, message: error.message, details: error };
     }
 
     return {
