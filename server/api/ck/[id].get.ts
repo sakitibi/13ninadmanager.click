@@ -1,10 +1,10 @@
-import { defineEventHandler, redirect, HTTPError } from "h3";
+import { defineEventHandler, sendRedirect, createError } from "h3";
 import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const id = event.context.params?.id;
     if (!id) {
-        throw new HTTPError({ statusCode: 400, statusMessage: "ID is required" });
+        throw createError({ statusCode: 400, statusMessage: "ID is required" });
     }
 
     const supabase = useSupabase();
@@ -17,8 +17,8 @@ export default defineEventHandler(async (event) => {
 
     // legacy=false のみ許可
     if (error || !data || data.legacy === true) {
-        throw new HTTPError({ statusCode: 404, statusMessage: "Not Found" });
+        throw createError({ statusCode: 404, statusMessage: "Not Found" });
     }
 
-    return redirect(data.url, 301);
+    return sendRedirect(event, data.url, 301);
 });

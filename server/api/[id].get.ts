@@ -1,4 +1,4 @@
-import { defineEventHandler, redirect, HTTPError } from "h3";
+import { defineEventHandler, createError, sendRedirect } from "h3";
 import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
@@ -15,8 +15,8 @@ export default defineEventHandler(async (event) => {
 
     // legacy=true のみ許可
     if (error || !data || data.legacy !== true) {
-        throw new HTTPError({ statusCode: 404, statusMessage: "Not Found" });
+        throw createError({ statusCode: 404, statusMessage: "Not Found" });
     }
 
-    return redirect(data.url, 301);
+    return sendRedirect(event, data.url, 301);
 });
