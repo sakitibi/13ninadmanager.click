@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
     const supabase = useSupabase();
     const { error } = await supabase
-        .schema("13ninad")
+        .schema("13ninad.click_urls")
         .from("click_urls")
         .insert({
             id,
