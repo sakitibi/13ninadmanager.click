@@ -3,7 +3,9 @@ import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const id = event.context.params?.id;
-    if (!id) return;
+    if (!id) {
+        throw createError({ statusCode: 404 });
+    }
 
     const supabase = useSupabase();
 
@@ -13,9 +15,8 @@ export default defineEventHandler(async (event) => {
         .eq("id", id)
         .single();
 
-    // legacy=true のみ許可
     if (error || !data || data.legacy !== true) {
-        throw createError({ statusCode: 404, statusMessage: "Not Found" });
+        throw createError({ statusCode: 404 });
     }
 
     return sendRedirect(event, data.url, 301);
