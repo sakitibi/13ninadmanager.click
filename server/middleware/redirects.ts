@@ -2,30 +2,33 @@ import { defineEventHandler, sendRedirect } from "h3";
 import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
-    // pathname のみ取得（query 排除）
-    const url = new URL(event.req.url!);
-    const pathname = url.pathname;
+    const reqUrl = event.req.url;
+    if (!reqUrl) return;
 
-    // "/" や "/ck/xxx" は middleware では触らない
-    if (pathname === "/" || pathname.startsWith("/ck/")) {
+    // query を除いた pathname
+    const pathname = reqUrl.split("?")[0];
+
+    // "/" と "/ck/*" は触らない
+    if (pathname === "/" || pathname?.startsWith("/ck/")) {
         return;
     }
 
     // "/abc123" → "abc123"
-    const id = pathname.slice(1);
+    const id = pathname?.slice(1);
     if (!id) return;
 
     const supabase = useSupabase();
 
     const { data, error } = await supabase
         .from("13ninad.click_urls")
-        .select("url")
+        .select("id")
         .eq("id", id)
         .single();
 
     if (error || !data) {
-        return; // 404 は Nuxt に任せる
+        return; // Nuxt に 404 を任せる
     }
-    // legacy=false は /ck 側へ
+
+    // 常に /ck に寄せる
     return sendRedirect(event, `/ck/${id}`, 302);
 });
