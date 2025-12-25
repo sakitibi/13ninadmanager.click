@@ -1,11 +1,28 @@
-import { defineEventHandler, readBody, getRequestURL } from "h3";
+import { defineEventHandler, getRequestURL } from "h3";
 import { nanoid } from "nanoid";
 import { useSupabaseServer } from "@/utils/supabase.server";
 
 export default defineEventHandler(async (event) => {
     try {
-        // H3 標準の readBody で安全に body を取得
-        const body = await readBody<Partial<{ url: string; description: string }>>(event);
+        // body を安全に取得する helper
+        const getJSONBody = async (): Promise<Partial<{ url: string; description: string }>> => {
+            // Node.js の場合
+            if (event.node?.req) {
+                const req = event.node.req as any; // Node IncomingMessage として扱う
+                let text = '';
+                for await (const chunk of req) text += chunk;
+                if (text) return JSON.parse(text);
+                return {};
+            }
+            // Edge ランタイムの場合
+            try {
+                return await event.req.json();
+            } catch {
+                return {};
+            }
+        };
+
+        const body = await getJSONBody();
 
         if (!body?.url) {
             return { error: true, statusCode: 400, message: "URL is required" };
