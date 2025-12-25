@@ -30,6 +30,5 @@ export default defineEventHandler(async (event) => {
     }
 
     // 常に /ck に寄せる
-    sendRedirect(event, `/ck/${id}`, 302);
-    return;
+    return sendRedirect(event, `/ck/${id}`, 301);
 });
