@@ -11,11 +11,11 @@ export default defineEventHandler(async (event) => {
 
     const { data, error } = await supabase
         .from("13ninad.click_urls")
-        .select("url, legacy")
+        .select("url")
         .eq("id", id)
         .single();
 
-    if (error || !data || data.legacy !== false) {
+    if (error || !data) {
         throw createError({ statusCode: 404 });
     }
 
