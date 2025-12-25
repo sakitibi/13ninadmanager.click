@@ -1,8 +1,11 @@
-import { defineEventHandler, readBody, createError, getRequestURL } from "h3";
-import { nanoid } from "nanoid";
-import { useSupabaseServer } from "@/utils/supabase.server";
+import { defineEventHandler/*, readBody, createError, getRequestURL */} from "h3";
+//import { nanoid } from "nanoid";
+//import { useSupabaseServer } from "@/utils/supabase.server";
+export default defineEventHandler(() => {
+    return { ok: true };
+});
 
-export default defineEventHandler(async (event) => {
+/*export default defineEventHandler(async (event) => {
     const body = await readBody<{ url: string; description: string | null }>(event);
 
     if (!body?.url) {
@@ -36,4 +39,4 @@ export default defineEventHandler(async (event) => {
         shortUrl: `${getRequestURL(event).origin}/ck/${id}`,
         outputDesc: body.description,
     };
-});
+});*/
