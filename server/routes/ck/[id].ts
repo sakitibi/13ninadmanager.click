@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         // throw しない
         return;
     }
-
     // 正常時のみリダイレクト
-    return sendRedirect(event, data.url, 301);
+    sendRedirect(event, data.url, 301);
+    return;
 });
