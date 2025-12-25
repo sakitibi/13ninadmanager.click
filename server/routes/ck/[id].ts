@@ -1,10 +1,11 @@
-import { defineEventHandler, sendRedirect, createError } from "h3";
+import { defineEventHandler, sendRedirect } from "h3";
 import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const id = event.context.params?.id;
     if (!id) {
-        throw createError({ statusCode: 404 });
+        // 何も返さず Nuxt に任せる（= 404 ページ）
+        return;
     }
 
     const supabase = useSupabase();
@@ -15,9 +16,11 @@ export default defineEventHandler(async (event) => {
         .eq("id", id)
         .single();
 
-    if (error || !data) {
-        throw createError({ statusCode: 404 });
+    if (error || !data?.url) {
+        // throw しない
+        return;
     }
 
+    // 正常時のみリダイレクト
     return sendRedirect(event, data.url, 301);
 });
