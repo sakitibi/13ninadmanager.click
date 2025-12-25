@@ -18,11 +18,7 @@ export default defineEventHandler(async (event) => {
 
     if (error) {
         // Supabase のエラー情報をそのままクライアントに返す
-        throw createError({
-            statusCode: 500,
-            statusMessage: "DB insert failed",
-            message: error.message || "Unknown Supabase Error"
-        });
+        return { error: true, statusCode: 500, message: error.message, details: error };
     }
 
     return {
