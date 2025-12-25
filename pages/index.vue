@@ -124,6 +124,8 @@ function signup() {
             <div v-if="forbidden" class="text-red-600 font-bold text-lg">
                 <h1>403 forbidden</h1>
                 <p>あなたはこのページにアクセスする権限がありません、</p>
+                <button @click="logout">ログアウト</button>
+                <button @click="signup">まだ登録していませんか?</button>
             </div>
             <!-- URL短縮フォーム -->
             <div v-else>
