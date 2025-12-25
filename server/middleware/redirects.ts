@@ -1,4 +1,4 @@
-import { defineEventHandler, redirect } from 'h3'
+import { defineEventHandler, sendRedirect } from 'h3'
 import { useSupabase } from '@/utils/supabase'
 
 export default defineEventHandler(async (event) => {
@@ -15,6 +15,6 @@ export default defineEventHandler(async (event) => {
 
     if (data?.url) {
         // 短縮URLならリダイレクト
-        return redirect(data.url, 301)
+        return sendRedirect(event, data.url, 301)
     }
 })
