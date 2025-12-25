@@ -1,19 +1,29 @@
-import { defineEventHandler, sendRedirect } from "h3";
+import { defineEventHandler } from "h3";
 import { useSupabase } from "@/utils/supabase";
 
 export default defineEventHandler(async (event) => {
     const id = event.context.params?.id;
-    if (!id) return;
+    if (!id) {
+        return new Response(null, { status: 404 });
+    }
 
     const supabase = useSupabase();
 
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("13ninad.click_urls")
         .select("url")
         .eq("id", id)
         .single();
 
-    if (!data?.url) return;
+    if (error || !data?.url) {
+        return new Response(null, { status: 404 });
+    }
 
-    return sendRedirect(event, data.url, 301);
+    // ★ これが最重要
+    return new Response(null, {
+        status: 301,
+        headers: {
+            Location: data.url,
+        },
+    });
 });
