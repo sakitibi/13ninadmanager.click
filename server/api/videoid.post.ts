@@ -15,7 +15,5 @@ export default defineEventHandler(async (event: any) => {
             data[i].contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.videoId
         );
     }
-    return {
-        data: videoIdArray
-    }
+    return videoIdArray;
 })
