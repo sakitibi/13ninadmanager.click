@@ -1,7 +1,6 @@
-import { defineEventHandler } from "h3";
 import { useSupabase } from "@/utils/supabase";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event: any) => {
     const id = event.context.params?.id;
     if (!id) {
         return new Response(null, { status: 404 });
