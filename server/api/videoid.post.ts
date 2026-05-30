@@ -12,7 +12,7 @@ export default defineEventHandler(async (event: any) => {
     let videoIdArray = [];
     for (let i = 0;i < data.length;i++) {
         videoIdArray.push(
-            data[i].ytInitialData.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.videoId
+            data[i].contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.videoId
         );
     }
     return {
