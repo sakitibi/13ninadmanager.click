@@ -9,11 +9,20 @@ export default defineEventHandler(async (event: any) => {
         body: JSON.stringify({urls: body})
     })
     const data = await response.json();
-    let videoIdArray = [];
+    let videoIdArray: string[] = [];
+    let videoLengthArray: number[] = [];
     for (let i = 0;i < data.length;i++) {
         videoIdArray.push(
             data[i].contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.videoId
         );
+        videoLengthArray.push(
+            parseInt(
+                data[i].contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.lengthSeconds
+            )
+        );
     }
-    return videoIdArray;
+    return {
+        src: videoIdArray,
+        times: videoLengthArray
+    };
 })
