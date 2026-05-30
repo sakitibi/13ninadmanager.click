@@ -6,7 +6,7 @@ export default defineEventHandler(async (event: any) => {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({urls: [body]})
+        body: JSON.stringify({urls: body})
     })
     const data = await response.json();
     let videoIdArray = [];
