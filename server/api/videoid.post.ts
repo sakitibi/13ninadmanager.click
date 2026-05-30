@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event: any) => {
     const body = await readBody(event)
-
+    console.log("body: ", body);
     const response = await fetch("https://asakura-wiki.vercel.app/api/youtube/playlists", {
         method: "POST",
         headers: {
