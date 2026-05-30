@@ -1,4 +1,8 @@
 export default defineEventHandler(async (event: any) => {
+    setResponseHeaders(event, {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+    })
     const body = await readBody(event)
     console.log("body: ", body);
     const response = await fetch("https://asakura-wiki.vercel.app/api/youtube/playlists", {
