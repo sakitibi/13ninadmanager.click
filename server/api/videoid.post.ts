@@ -18,7 +18,7 @@ export default defineEventHandler(async (event: any) => {
         videoLengthArray.push(
             parseInt(
                 data[i].contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents[0].playlistVideoRenderer.lengthSeconds
-            )
+            ) + 2
         );
     }
     return {
